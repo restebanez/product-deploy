@@ -27,7 +27,7 @@ params = {:output_type => 'stdout',
 
 
 #cloud_type = ProductDeploy::Util.get_cloud_type #DELETE
-cloud_type='db'
+#cloud_type='db'
 puts "This is a #{cloud_type} machine"
 
           

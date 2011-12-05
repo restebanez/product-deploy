@@ -1,0 +1,38 @@
+PATH
+  remote: .
+  specs:
+    product-deploy (0.0.5)
+      excon (= 0.2.8)
+      fog (= 0.3.30)
+      nokogiri
+      trollop
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    builder (3.0.0)
+    excon (0.2.8)
+    fog (0.3.30)
+      builder
+      excon (>= 0.2.8)
+      formatador (>= 0.0.16)
+      json
+      mime-types
+      named-parameters (>= 0.0.17)
+      net-ssh (>= 2.0.23)
+      nokogiri (>= 1.4.4)
+      ruby-hmac
+    formatador (0.2.1)
+    json (1.6.1)
+    mime-types (1.17.2)
+    named-parameters (0.0.22)
+    net-ssh (2.2.1)
+    nokogiri (1.5.0)
+    ruby-hmac (0.4.0)
+    trollop (1.16.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  product-deploy!

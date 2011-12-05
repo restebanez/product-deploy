@@ -115,7 +115,7 @@ module ProductDeploy
                 log = "#{local_route}.log"
                 # using \" \" because local_route (filename) can contain spaces
                 # -b adds exit codes to sqlcmd.exe
-                cmd_to_run = "#{SQL_CMD} -b -d #{@db_name} -i \"#{local_route}\" -o \"#{log}\""
+                cmd_to_run = "#{SQL_CMD} -I -b -d #{@db_name} -i \"#{local_route}\" -o \"#{log}\""
                 # System captures the exit code of the the command, if 0 returns TRUE if non 0 
                 # returns FALSE
                 start_time = Time.now.strftime("%Y-%m-%d %H:%M:%S")
