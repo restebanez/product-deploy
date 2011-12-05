@@ -106,15 +106,15 @@ module ProductDeploy
                  @output.puts "ERROR: SQL role doen't have binaries to deploy"
 
               when "APP"                
-                 file_join(COMMON_RAVE_PATH,db_name,APP_RELATIVE_PATH)
+                 file_join(@common_rave_path,db_name,@app_relative_path)
 
               when "WEB"
-                 file_join(COMMON_RAVE_PATH,db_name,WEB_RELATIVE_PATH)
+                 file_join(@common_rave_path,db_name,@web_relative_path)
                  
               when "VIEWER"
                   viewer_full_path =[]
-                  VIEWERS_RELATIVE_PATH.each do |viewer_relative_path|
-                      viewer_full_path << file_join(COMMON_RAVE_PATH,db_name,viewer_relative_path)
+                  @viewers_relative_path.each do |viewer_relative_path|
+                      viewer_full_path << file_join(@common_rave_path,db_name,viewer_relative_path)
                   end
                   viewer_full_path
               else

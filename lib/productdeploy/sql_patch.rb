@@ -41,40 +41,40 @@ module ProductDeploy
         # Errors are log to "error_log"
         def apply_sql_patch_script(sql_script,n,sub_n,dst_folder,error_log,s3_folder)
             
-                local_route = file_join(dst_folder,"#{n}-#{sub_n}-#{sql_script}")
+            local_route = file_join(dst_folder,"#{n}-#{sub_n}-#{sql_script}")
+            
+            # if the sql_script already exsits in local it means that it was alreay apply. 
+            # fair enought?
+            if File.exists?(local_route)
+                @output.puts  " Skipping: #{local_route} was already applied"
+            else
                 
-                # if the sql_script already exsits in local it means that it was alreay apply. 
-                # fair enought?
-                if File.exists?(local_route)
-                    @output.puts  " Skipping: #{local_route} was already applied"
-                else
-                    
-                    s3_file = File.join(s3_folder,sql_script)
-                    #s3_patch_file = @s3.directories.get(@s3_bucket,{'delimiter' => '/','prefix' => s3_file}).files.first # it may show more than one file
-                    s3_patch_file = get_s3_file(s3_file)
-                    # This means that XML has wrong information
-                    raise("\"#{s3_file}\" doesn't exist") if s3_patch_file.nil?
-                    File.open(local_route,'wb') { |file| file << s3_patch_file.body }
-                    @output.print " Applying: #{local_route}"
-                    log = "#{local_route}.log"
-                    # using \" \" because local_route (filename) can contain spaces
-                    # -b adds exit codes to sqlcmd.exe
-                    cmd_to_run = "#{SQL_CMD} -b -d #{@db_name} -i \"#{local_route}\" -o \"#{log}\""
-                    # System captures the exit code of the the command, if 0 returns TRUE if non 0 
-                    # returns FALSE
-                    unless system(cmd_to_run)
-                        @output.print " ...FAILED\n"
-                        File.open(error_log,'ab') do |file|
-                            file << "\r\n#{time_now} There was a problem running the command: #{cmd_to_run}\r\n"
-                            file << "                   Error code: #{$?.inspect}\r\n"
-                            file << File.open(log,'rb').read
-                        end
-                        return false
-                    else
-                        @output.print " ...OK\n"
-                        return true
+                s3_file = File.join(s3_folder,sql_script)
+                #s3_patch_file = @s3.directories.get(@s3_bucket,{'delimiter' => '/','prefix' => s3_file}).files.first # it may show more than one file
+                s3_patch_file = get_s3_file(s3_file)
+                # This means that XML has wrong information
+                raise("\"#{s3_file}\" doesn't exist") unless s3_patch_file
+                File.open(local_route,'wb') { |file| file << s3_patch_file.body }
+                @output.print " Applying: #{local_route}"
+                log = "#{local_route}.log"
+                # using \" \" because local_route (filename) can contain spaces
+                # -b adds exit codes to sqlcmd.exe
+                cmd_to_run = "#{SQL_CMD} -b -d #{@db_name} -i \"#{local_route}\" -o \"#{log}\""
+                # System captures the exit code of the the command, if 0 returns TRUE if non 0 
+                # returns FALSE
+                unless system(cmd_to_run)
+                    @output.print " ...FAILED\n"
+                    File.open(error_log,'ab') do |file|
+                        file << "\r\n#{time_now} There was a problem running the command: #{cmd_to_run}\r\n"
+                        file << "                   Error code: #{$?.inspect}\r\n"
+                        file << File.open(log,'rb').read
                     end
-                end   
+                    return false
+                else
+                    @output.print " ...OK\n"
+                    return true
+                end
+            end   
         end
     
         # Apply all the sql patches specified
@@ -111,10 +111,12 @@ module ProductDeploy
                 @output.puts  "#{no_errors} Patched were applied"
             end        
         end
+
         
         def time_now
             Time.now.strftime("%Y/%m/%d %H:%M")
         end
+
         
         def sql_extract_scriptname_xml(node,patch_number)
             if ( node["ScriptName"].nil? ) || ( node["ScriptName"].empty? )

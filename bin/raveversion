@@ -20,7 +20,12 @@ params = {:output_type => 'stdout',
           :requested_patches_to_apply => paches,
           :rave_patches_bucket => 'aws-mdsol-dev-rave-patches-5.6.3.86',
           :db_name => 'raveawsrif',
-          :store_patches_applied => true}
+          :store_patches_applied => true,
+          :common_rave_path => 'C:\MedidataAPP\Sites',
+          :web_relative_path => 'MedidataRAVE',
+          :app_relative_path => 'RaveService',
+          :viewers_relative_path => %w{RaveCrystalViewers\Viewer1 RaveCrystalViewers\Viewer2}
+          }
 
 
 
@@ -32,7 +37,7 @@ time = Benchmark.measure do
     case cloud_type
         when 'web' then  # we want to store the patches applied after patching viewer
                         params[:store_patches_applied] = false
-                        #run = ProductDeploy::WebPatch.new(params)
+                        run = ProductDeploy::WebPatch.new(params)
                         params[:store_patches_applied] = true
                         run = ProductDeploy::ViewerPatch.new(params)
         when 'app' then run = ProductDeploy::AppPatch.new(params)

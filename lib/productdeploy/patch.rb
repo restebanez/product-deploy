@@ -5,6 +5,7 @@ module ProductDeploy
         PATCHES_IGNORED = ["196", "210", "214", "223", "225", "227"]
         RAVE_VERSION = '5.6.3.86'
         XML_RAVE_PATCH_NAME = 'RavePatch3.xml'
+        XML_CODER_PATCH_NAME = 'CoderVersion.xml'
 
        attr_reader :role, :xml_patches, :consolidated_patches
 
@@ -12,7 +13,14 @@ module ProductDeploy
        def initialize(params)
 
            @output = select_output(params[:output_type]) # This method lives in Util class
+           # After patching, write which patches were applied. 
+           # For Web we first have to apply web role and then viewer, we'll store it after viewer
            @store_patches_applied = params[:store_patches_applied]
+           @common_rave_path = params[:common_rave_path] || 'C:\MedidataAPP\Sites'
+           @web_relative_path = params[:web_relative_path] || 'MedidataRAVE'
+           @app_relative_path = params[:app_relative_path] || 'RaveService'
+           @viewers_relative_path = params[:viewers_relative_path] || %w{RaveCrystalViewers\Viewer1 RaveCrystalViewers\Viewer2}
+           
            # viewer integration, role only works with APP, WEB and SQL
            # there should be two vars, role and filetype
            @db_name, @s3_bucket  = params[:db_name], params[:rave_patches_bucket]
@@ -22,6 +30,7 @@ module ProductDeploy
           
            @s3=Fog::Storage.new(:provider => 'AWS', :aws_access_key_id=>  params[:aws_access_key_id],
            	                                        :aws_secret_access_key =>  params[:aws_secret_access_key])
+           @params = params # we need many params for coder_sql_patch logging into the table
            to_patch 
        end 
 
@@ -84,10 +93,10 @@ module ProductDeploy
 
        # It turns every RaveVersion3.xml included in every patch folder into a complex hash
        #  Check at the end for a real data example
-       def turn_xml_patches_into_hash
+       def turn_xml_patches_into_hash(xml_patch_name=XML_RAVE_PATCH_NAME)
             patch_folders = get_s3_files.common_prefixes
             patch_folders.each do |patch_folder|
-                rave_patch_xml = get_s3_file(patch_folder + XML_RAVE_PATCH_NAME)
+                rave_patch_xml = get_s3_file(patch_folder + xml_patch_name)
                 next unless rave_patch_xml # if it hasn't a RavePatch3.xml file
                 tmp = {}
                 tmp.store('folder',patch_folder)    
@@ -95,12 +104,17 @@ module ProductDeploy
                 
                 patch_number = get_patch_number(rave_patch_xml.body)
                 # verify is a 3 digit number
-                raise("Patch number:#{patch_number} on #{rave_patch_xml.key} isn't valid") unless patch_number =~ /[0-9]{3}/
+                raise("Patch number:#{patch_number} on #{rave_patch_xml.key} isn't valid") unless valid_patch_number(patch_number)
                 scriptnames = get_scriptnames(rave_patch_xml.body)
                 tmp.store(@role,scriptnames)
                 @xml_patches.store(patch_number,tmp)
             end #do
                 
+       end
+       
+       # this is overriden in coder because it uses build numbers
+       def valid_patch_number(patch_number)
+           patch_number =~ /[0-9]{3}/
        end
 
        # Based on the patches to apply, it generates a final hash with:
@@ -238,7 +252,7 @@ private
          doc.xpath("//Script[@FileType = \"#{@role}\"]").each do |node|
             if @role == 'SQL'
                 files_path["sql_scripts"] ||= []
-                script_name = sql_extract_scriptname_xml(node,patch_number)
+                script_name = sql_extract_scriptname_xml(node,patch_number)                
                 files_path["sql_scripts"] << script_name if script_name
             else 
                 files_path["#{node["RelativePath"]}"] ||= []

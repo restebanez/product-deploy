@@ -20,7 +20,7 @@ module ProductDeploy
         end
         
         def get_rave_path(db_name)        
-                 file_join(COMMON_RAVE_PATH,db_name,APP_RELATIVE_PATH)
+                 file_join(@common_rave_path,db_name,@app_relative_path)
         end
          
     end #class

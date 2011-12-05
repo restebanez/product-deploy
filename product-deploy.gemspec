@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
                        lib/productdeploy/app_patch.rb
                        lib/productdeploy/coder_app_patch.rb
                        lib/productdeploy/coder_cws_patch.rb
+                       lib/productdeploy/coder_sql_patch.rb                       
                        lib/productdeploy/viewer_patch.rb  
                        lib/productdeploy/web_patch.rb 
                        lib/productdeploy/sql_patch.rb 

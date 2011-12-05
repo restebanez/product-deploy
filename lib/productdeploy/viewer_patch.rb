@@ -30,11 +30,11 @@ module ProductDeploy
         end
         
         def get_rave_path(db_name)
-                  viewer_full_path =[]
-                  VIEWERS_RELATIVE_PATH.each do |viewer_relative_path|
-                      viewer_full_path << file_join(COMMON_RAVE_PATH,db_name,viewer_relative_path)
-                  end
-                  viewer_full_path
+            viewer_full_path =[]
+            @viewers_relative_path.each do |viewer_relative_path|
+                viewer_full_path << file_join(@common_rave_path,db_name,viewer_relative_path)
+            end
+            viewer_full_path
          end
         
     end #class

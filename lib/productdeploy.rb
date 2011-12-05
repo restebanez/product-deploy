@@ -27,10 +27,7 @@ end
 
 MAX_THREAD = 30 #I've testing with 200 (too many open files), 100, 75, 50, 35, 30, 20
 
-COMMON_RAVE_PATH = 'C:\MedidataAPP\Sites'
-WEB_RELATIVE_PATH = 'MedidataRAVE'
-APP_RELATIVE_PATH = 'RaveService'
-VIEWERS_RELATIVE_PATH = %w{RaveCrystalViewers\Viewer1 RaveCrystalViewers\Viewer2} #In DR there are only 2 Viewers
+
 
 CODER_COMMON_PATH = 'C:\Program Files (x86)\Medidata Solutions'
 CODER_APP_RELATIVE_PATH = 'CoderWebServer2'
@@ -53,5 +50,7 @@ require 'productdeploy/viewer_patch'
 require 'productdeploy/web_patch'
 require 'productdeploy/coder_app_patch.rb'
 require 'productdeploy/coder_cws_patch.rb'
+require 'productdeploy/coder_sql_patch.rb'
+
 
 
