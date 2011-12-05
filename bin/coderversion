@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'productdeploy'))
+require 'rubygems'
+require 'fog'
+require 'fog/core/credentials'
+require 'pp'
+
+unless Fog.respond_to?('credentials')
+   abort('Please create the .fog file with the right credentials') 
+end
+
+
+paches = %w{001 002}
+
+params = {:output_type => 'stdout',
+          :aws_access_key_id => Fog.credentials[:aws_access_key_id],
+          :aws_secret_access_key => Fog.credentials[:aws_secret_access_key],
+          :requested_patches_to_apply => paches,
+          :rave_patches_bucket => 'aws-mdsol-dev-coder-patches',
+          :db_name => 'none',
+          :store_patches_applied => true}
+
+
+
+cloud_type = ProductDeploy::Util.get_cloud_type
+#productdeploycloud_type = 'cws'
+puts "This is a #{cloud_type} machine"
+
+          
+time = Benchmark.measure do
+    case cloud_type
+        when 'app' then run = ProductDeploy::CoderAppPatch.new(params)
+        when 'cws' then run = ProductDeploy::CoderCwsPatch.new(params)
+        else puts  "cloud type #{cloud_type} unknown, check medistrano cloud definition"
+    end
+    
+    run.debug
+end
+puts time
