@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
                        util/xml_app_for_baselines.rb
                        util/xml_web_for_baselines.rb
                        bin/raveversion
+                       bin/raveversion564
                        bin/coderversion  
                        lib/productdeploy.rb 
                        lib/productdeploy/util.rb 

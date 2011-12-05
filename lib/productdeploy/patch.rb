@@ -17,8 +17,8 @@ module ProductDeploy
            # For Web we first have to apply web role and then viewer, we'll store it after viewer
            @store_patches_applied = params[:store_patches_applied]
            @common_rave_path = params[:common_rave_path] || 'C:\MedidataAPP\Sites'
-           @web_relative_path = params[:web_relative_path] || 'MedidataRAVE'
-           @app_relative_path = params[:app_relative_path] || 'RaveService'
+           @web_relative_path = params[:web_relative_path] || '' # || 'MedidataRAVE'
+           @app_relative_path = params[:app_relative_path] || '' # || 'RaveService'
            @viewers_relative_path = params[:viewers_relative_path] || %w{RaveCrystalViewers\Viewer1 RaveCrystalViewers\Viewer2}
            
            # viewer integration, role only works with APP, WEB and SQL
