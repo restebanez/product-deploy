@@ -10,7 +10,7 @@ unless Fog.respond_to?('credentials')
 end
 
 # Folder names in the s3 bucket
-build_number = %w{ 1.0.56 }
+build_number = %w{ 1.0.56 1.0.78 1.0.99 1.0.100 }
 
 params = {:output_type => 'stdout',
           :aws_access_key_id => Fog.credentials[:aws_access_key_id],
@@ -26,7 +26,8 @@ params = {:output_type => 'stdout',
 
 
 
-cloud_type = ProductDeploy::Util.get_cloud_type
+#cloud_type = ProductDeploy::Util.get_cloud_type #DELETE
+cloud_type='db'
 puts "This is a #{cloud_type} machine"
 
           

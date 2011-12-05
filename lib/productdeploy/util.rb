@@ -27,6 +27,7 @@ module ProductDeploy
         # it parses c:\chef\etc\client.rb to find out the role
         # it'll return app,web or sql
         def self.get_cloud_type # this term comes from medistrano
+            #return 'db' #DELETE
             raise "#{CHEF_CLIENT_FILE} doesn't exist" unless File.exists?(CHEF_CLIENT_FILE)
             chef_conf = File.open(CHEF_CLIENT_FILE,'rb').read
             return $1 if chef_conf =~ /^node_name \".*?\.(\w+)\.i-.*\"/

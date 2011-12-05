@@ -55,7 +55,10 @@ module ProductDeploy
             
             errors = 0
             no_errors = 0
-            list = @patches_to_apply.sort
+            #list = @patches_to_apply.sort # It doesn't sort properly: 100 comes before 99
+            list = @patches_to_apply
+            
+            #abort("APPLY:This is a test:#{list}") #DELETE
             list.each do |n|
                 raise("Build number: #{n} doesn't exist") unless @xml_patches.has_key?(n)
                 if query_patch(n)

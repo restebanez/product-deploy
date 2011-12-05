@@ -220,6 +220,7 @@ private
              @output.puts("  - Current patch level: #{applied.empty? ? "None" : applied.join(' ')}") 
              @output.puts("  - Patches to ignore: #{PATCHES_IGNORED.empty? ? "None" : PATCHES_IGNORED.join(' ')}")
              to_apply
+             #abort("This is a test:#{to_apply}") #DELETE
       end
 
       # return and array of matches
